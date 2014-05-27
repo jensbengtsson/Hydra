@@ -1,7 +1,5 @@
 package com.findwise.hydra.local;
 
-import static org.junit.Assert.*;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -13,11 +11,16 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.findwise.hydra.Document;
+import com.findwise.hydra.Document.Action;
 import com.findwise.hydra.JsonException;
 import com.findwise.hydra.SerializationUtils;
-import com.findwise.hydra.Document.Action;
 import com.findwise.tools.Comparator;
-import org.mockito.Mockito;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 
 public class LocalDocumentTest {
@@ -96,7 +99,7 @@ public class LocalDocumentTest {
 
 		ld.setAction(Action.DELETE);
 
-		LocalDocument ld2 = new LocalDocument(ld.toJson());
+		LocalDocument ld2 = new LocalDocument(ld);
 		if (ld.getAction() != ld2.getAction()) {
 			fail("Action wasn't serialized, should have been " + ld.getAction() + " but was " + ld2.getAction());
 		}
@@ -115,7 +118,7 @@ public class LocalDocumentTest {
 		LocalDocument ld = new LocalDocument();
 		ld.putContentField("test", "escaped \\\\ slash");
 
-		LocalDocument ld2 = new LocalDocument(ld.toJson());
+		LocalDocument ld2 = new LocalDocument(ld);
 
 		if (!ld.isEqual(ld2)) {
 			fail("Documents not equal");
@@ -164,7 +167,7 @@ public class LocalDocumentTest {
 			fail("test2 and test are equal"); //Just a sanity check on equals
 		}
 
-		LocalDocument test3 = new LocalDocument(test.toJson());
+		LocalDocument test3 = new LocalDocument(test);
 		if (!test.isEqual(test3)) {
 			fail("JSON-generated document is not equal to the JSON source");
 		}
@@ -259,11 +262,31 @@ public class LocalDocumentTest {
 		if (d.isSynced()) {
 			fail("Document should be out of sync.");
 		}
+	}
 
-		LocalDocument d2 = new LocalDocument(d.toJson());
-		if (!d2.isSynced()) {
-			fail("Document should be in sync.");
-		}
+	@Test
+	public void testDocumentsCreatedFromJsonAreSynced() throws Exception {
+		LocalDocument doc = new LocalDocument();
+		doc.putContentField("x", "y");
+		LocalDocument newFromJson = new LocalDocument(doc.toJson());
+		assertTrue("Document created from json should be synced", newFromJson.isSynced());
+	}
+
+	@Test
+	public void testCopyOfAnUnsyncedDocumentIsUnsynced() throws Exception {
+		LocalDocument doc = new LocalDocument();
+		doc.putContentField("x", "y");
+		LocalDocument docCopy = new LocalDocument(doc);
+		assertFalse("Copy of unsynced document should be unsynced", docCopy.isSynced());
+	}
+
+	@Test
+	public void testCopyOfASyncedDocumentIsSynced() throws Exception {
+		LocalDocument doc = new LocalDocument();
+		doc.putContentField("x", "y");
+		doc.markSynced();
+		LocalDocument docCopy = new LocalDocument(doc);
+		assertTrue("Copy of synced document should be synced", docCopy.isSynced());
 	}
 
 	@Test

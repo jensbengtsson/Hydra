@@ -13,9 +13,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.findwise.hydra.local.LocalDocument;
-import com.findwise.hydra.stage.ProcessException;
-import com.findwise.hydra.stage.RequiredArgumentMissingException;
-import junit.framework.Assert;
 
 public class JsoupSelectorTest {
 
@@ -80,7 +77,7 @@ public class JsoupSelectorTest {
 	}
 
 	@Test
-	public void testGetSingleH1Tag() throws ProcessException, RequiredArgumentMissingException, IllegalArgumentException, IllegalAccessException {
+	public void testGetSingleH1Tag() throws Exception {
 		
 		jsoup.process(doc);
 		
@@ -89,7 +86,7 @@ public class JsoupSelectorTest {
 	}
 	
 	@Test
-	public void testGetMultipleH2Tag() throws ProcessException, RequiredArgumentMissingException, IllegalArgumentException, IllegalAccessException {
+	public void testGetMultipleH2Tag() throws Exception {
 
 		jsoup.process(doc);
 		
@@ -97,7 +94,7 @@ public class JsoupSelectorTest {
 	}
 	
 	@Test
-	public void testExtractAllText() throws ProcessException, RequiredArgumentMissingException, IllegalArgumentException, IllegalAccessException {
+	public void testExtractAllText() throws Exception {
 
 		jsoup.process(doc);
 						
@@ -105,7 +102,7 @@ public class JsoupSelectorTest {
 	}
 	
 	@Test
-	public void testExtractAllTextBrokenHTML() throws ProcessException, RequiredArgumentMissingException, IllegalArgumentException, IllegalAccessException {
+	public void testExtractAllTextBrokenHTML() throws Exception {
 		
 		doc.putContentField("rawcontent", "<p>min fina <b>text</b> komemr hÃ¤r. Den har en <a href=\"http://hej.se <http://hej.se/> \">lÃ¤nk</a> i ocksÃ¥</p>");
 
@@ -115,7 +112,7 @@ public class JsoupSelectorTest {
 	}
 	
 	@Test
-	public void testEmptyField() throws ProcessException, RequiredArgumentMissingException, IllegalArgumentException, IllegalAccessException {
+	public void testEmptyField() throws Exception {
 		
 		doc.putContentField("rawcontent", "");
 
@@ -125,16 +122,16 @@ public class JsoupSelectorTest {
 	}
 	
 	@Test
-	public void testUnavaiablefield() throws ProcessException, RequiredArgumentMissingException, IllegalArgumentException, IllegalAccessException {
+	public void testUnavaiablefield() throws Exception {
 		
 		jsoup.process(new LocalDocument());
-                Assert.assertNull(doc.getContentField("extracted_text"));
-                Assert.assertNull(doc.getContentField("h1"));
-                Assert.assertNull(doc.getContentField("h2"));
+		assertNull(doc.getContentField("extracted_text"));
+		assertNull(doc.getContentField("h1"));
+		assertNull(doc.getContentField("h2"));
 	}
 	
 	@Test
-	public void testGetAllPTagsFromList() throws ProcessException {
+	public void testGetAllPTagsFromList() throws Exception {
 		
 		String content = "<html><head></head><body><p>one</p><p>two</p></body></html>";
 		
@@ -154,7 +151,7 @@ public class JsoupSelectorTest {
 	}
 	
 	@Test
-	public void testPseudoSelector() throws ProcessException {
+	public void testPseudoSelector() throws Exception {
 
 		String content = "<html><head></head><body><p>one</p><p><a href=''>two</a></p></body></html>";
 
@@ -171,7 +168,7 @@ public class JsoupSelectorTest {
 	}
 	
 	@Test
-	public void testGetHTML() throws ProcessException {
+	public void testGetHTML() throws Exception {
 		String content = "<html><head></head><body><p>one</p><p>two</p></body></html>";
 
 		doc.putContentField("othercontent", content);
@@ -186,6 +183,5 @@ public class JsoupSelectorTest {
 		assertTrue("Expected " + correct + " got " + result,
 					result.equalsIgnoreCase(correct));
 	}
-		
 }
 
